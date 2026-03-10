@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comment a-t-on su ? — Une histoire de la construction du savoir scientifique</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="logo">Comment a-t-on su ?<span>Une histoire de la construction du savoir scientifique</span></div>
+  <div class="search-wrapper">
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="searchInput" placeholder="Rechercher… (ou /)">
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</header>
+
+<div class="controls-bar">
+  <div class="view-toggle">
+    <button class="view-btn active" id="btnTimeline">Frise</button>
+    <button class="view-btn" id="btnGraph">Arbre</button>
+    <button class="view-btn" id="btnNodes">Liste</button>
+    <button class="view-btn" id="btnPeople">Personnes</button>
+  </div>
+  <div class="legend" id="legend"></div>
+  <button id="btnFilters">☰ Filtres</button>
+</div>
+
+<div class="mob-overlay" id="mobOverlay"></div>
+
+<div class="app">
+  <div class="sidebar" id="sidebar"></div>
+  <div class="main-area">
+    <!-- FRISE -->
+    <div class="timeline-panel" id="timelinePanel">
+      <div class="timeline-scroll-wrap">
+        <div class="timeline-container" id="timelineContainer">
+          <svg id="connections-svg" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;"></svg>
+        </div>
+      </div>
+    </div>
+    <!-- GRAPHE -->
+    <div class="graph-panel" id="graphPanel">
+      <canvas id="graphCanvas"></canvas>
+      <div class="graph-tooltip" id="graphTooltip"></div>
+    </div>
+    <!-- LISTE NŒUDS -->
+    <div class="nodes-panel" id="nodesPanel">
+      <div class="nodes-toolbar">
+        <div class="nodes-sort-group">
+          <span>Tri</span>
+          <button class="nodes-sort-btn active" data-sort="year">Chronologique</button>
+          <button class="nodes-sort-btn" data-sort="type">Type</button>
+        </div>
+        <span class="nodes-count" id="nodesCount"></span>
+      </div>
+      <div class="nodes-grid" id="nodesGrid"></div>
+    </div>
+    <!-- PERSONNES -->
+    <div class="people-panel" id="peoplePanel">
+      <div class="nodes-toolbar">
+        <div class="nodes-sort-group">
+          <span>Tri</span>
+          <button class="people-sort-btn active" data-sort="date">Date</button>
+          <button class="people-sort-btn" data-sort="name">Nom</button>
+          <button class="people-sort-btn" data-sort="domain">Domaine</button>
+        </div>
+        <span class="nodes-count" id="peopleCount"></span>
+      </div>
+      <div class="people-grid" id="peopleGrid"></div>
+    </div>
+    <!-- DETAIL -->
+    <div class="detail-panel empty" id="detailPanel">
+      <div id="detailContent" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<div class="detail-empty" id="detailEmpty">
+  <span style="opacity:0.55">⊙</span> Cliquez un élément
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
