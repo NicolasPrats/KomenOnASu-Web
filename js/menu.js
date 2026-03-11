@@ -30,14 +30,29 @@ function _renderVersionList() {
   const current = getCurrentVersion();
   const submenu = document.getElementById('versionSubmenu');
 
-  submenu.innerHTML = getAvailableVersions().map(v => {
+  // Clear existing items
+  submenu.innerHTML = '';
+
+  getAvailableVersions().forEach(v => {
     const isActive = v === current;
     const label    = v === LOCAL_VERSION ? 'Données locales' : v;
-    return `<button class="menu-version-item${isActive ? ' active' : ''}" data-version="${v}">
-      <span class="menu-check">${isActive ? '✓' : ''}</span>
-      <span>${label}</span>
-    </button>`;
-  }).join('');
+
+    const button = document.createElement('button');
+    button.classList.add('menu-version-item');
+    if (isActive) button.classList.add('active');
+    button.dataset.version = v;
+
+    const checkSpan = document.createElement('span');
+    checkSpan.classList.add('menu-check');
+    checkSpan.textContent = isActive ? '✓' : '';
+
+    const labelSpan = document.createElement('span');
+    labelSpan.textContent = label;
+
+    button.appendChild(checkSpan);
+    button.appendChild(labelSpan);
+    submenu.appendChild(button);
+  });
 }
 
 function _updateVersionLabel() {
