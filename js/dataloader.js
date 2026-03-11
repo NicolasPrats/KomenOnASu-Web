@@ -84,14 +84,18 @@ function _bootstrapData(raw) {
 
 // ── Generic JSON fetch with timeout ──────────────────────────
 async function _fetchJson(url) {
+  const ctrl = new AbortController();
+  let timeout;
   try {
-    const ctrl    = new AbortController();
-    const timeout = setTimeout(() => ctrl.abort(), 8000);
-    const res     = await fetch(url, { signal: ctrl.signal });
-    clearTimeout(timeout);
+    timeout = setTimeout(() => ctrl.abort(), 8000);
+    const res = await fetch(url, { signal: ctrl.signal });
     if (!res.ok) return null;
     return await res.json();
   } catch {
     return null;
+  } finally {
+    if (timeout !== undefined) {
+      clearTimeout(timeout);
+    }
   }
 }
