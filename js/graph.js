@@ -377,7 +377,21 @@ export function initGraph() {
     if (hit) {
       tooltip.style.left = (e.offsetX + 16) + 'px';
       tooltip.style.top  = (e.offsetY + 12) + 'px';
-      tooltip.innerHTML  = `<div class="tt-name">${hit.name}</div><div class="tt-year">${yearToLabel(hit.year)}</div><div class="tt-type">${getElements()[hit.element]?.label ?? ''}</div>`;
+      // Build tooltip content safely without using innerHTML to avoid XSS.
+      tooltip.textContent = '';
+      const nameDiv = document.createElement('div');
+      nameDiv.className = 'tt-name';
+      nameDiv.textContent = hit.name ?? '';
+      const yearDiv = document.createElement('div');
+      yearDiv.className = 'tt-year';
+      yearDiv.textContent = yearToLabel(hit.year);
+      const typeDiv = document.createElement('div');
+      typeDiv.className = 'tt-type';
+      const elements = getElements();
+      typeDiv.textContent = elements[hit.element]?.label ?? '';
+      tooltip.appendChild(nameDiv);
+      tooltip.appendChild(yearDiv);
+      tooltip.appendChild(typeDiv);
       tooltip.classList.add('visible');
     } else {
       tooltip.classList.remove('visible');
