@@ -1,6 +1,4 @@
-import { ELEMENTS, ELEMENT_ICONS } from '../data/elements.js';
-import { SCIENTISTS } from '../data/scientists.js';
-import { state, getActiveNodes, yearToLabel, getActiveScientists } from './store.js';
+import { getActiveNodes, getActiveScientists, getElementIcons, getElements, getScientists, state, yearToLabel } from './store.js';
 import { selectNode, selectScientist } from './detail.js';
 
 export const TL = {
@@ -87,8 +85,8 @@ function renderNodes(container, sorted, colAssigned, yearToY) {
     colCursor[col] = topY + TL.CARD_H + TL.MIN_GAP;
 
     const dimmed = state.hiddenElements.has(node.element);
-    const elInfo = ELEMENTS[node.element] ?? { color:'#888', label:node.element };
-    const icon   = ELEMENT_ICONS[node.element] ?? '';
+    const elInfo = getElements()[node.element] ?? { color:'#888', label:node.element };
+    const icon   = getElementIcons()[node.element] ?? '';
 
     const dotWrap = document.createElement('div');
     dotWrap.className = 'node-dot-wrap';
@@ -270,7 +268,7 @@ function drawConnections(nodes, container) {
       const x2 = tR.left - contRect.left + tR.width/2;
       const y2 = tR.top  - contRect.top  + tR.height/2;
       const dist = Math.hypot(x2-x1, y2-y1);
-      const color = ELEMENTS[node.element]?.color ?? '#555';
+      const color = getElements()[node.element]?.color ?? '#555';
       const opacity = dist < 80 ? 0.55 : dist < 180 ? 0.38 : 0.22;
       const weight  = dist < 80 ? 1.8  : 1.2;
       const bow = (Math.abs(x1-x2) < 10) ? 28 : 0;
