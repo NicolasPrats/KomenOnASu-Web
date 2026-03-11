@@ -1,7 +1,4 @@
-import { ELEMENTS } from '../data/elements.js';
-import { SCIENTISTS } from '../data/scientists.js';
-import { TOPICS } from '../data/topics.js';
-import { ALL_NODES, state, yearToLabel } from './store.js';
+import { getAllNodes, getElements, getScientists, getTopics, state, yearToLabel } from './store.js';
 import { toggleTopic } from './sidebar.js';
 import { switchView } from './views.js';
 import { selectNode, selectScientist } from './detail.js';
@@ -14,20 +11,20 @@ export function buildSearch() {
   input.addEventListener('input', () => {
     const q = norm(input.value.trim());
     if (!q) { results.classList.remove('open'); return; }
-    const nodeMatches = ALL_NODES.filter(n =>
+    const nodeMatches = getAllNodes().filter(n =>
       norm(n.name).includes(q) || norm(n.author??'').includes(q) || norm(n.excerpt??'').includes(q)
     ).slice(0,5);
-    const sciMatches = Object.entries(SCIENTISTS).filter(([,s]) =>
+    const sciMatches = Object.entries(getScientists()).filter(([,s]) =>
       norm(s.name).includes(q) || norm(s.tagline).includes(q)
     ).slice(0,3);
     if (!nodeMatches.length && !sciMatches.length) { results.classList.remove('open'); return; }
     results.innerHTML = [
       ...nodeMatches.map(n => {
-        const c = ELEMENTS[n.element]?.color ?? '#888';
+        const c = getElements()[n.element]?.color ?? '#888';
         return `<div class="search-result-item" data-type="node" data-id="${n.id}" data-topic="${n.topicId}">
           <div class="res-dot" style="background:${c}"></div>
           <span class="res-name">${n.name}</span>
-          <span class="res-topic">${TOPICS[n.topicId]?.label??''}</span>
+          <span class="res-topic">${getTopics()[n.topicId]?.label??''}</span>
           <span class="res-year">${yearToLabel(n.year)}</span>
         </div>`;
       }),
@@ -50,7 +47,7 @@ export function buildSearch() {
           const targetView = isMobile() ? 'nodes' : 'timeline';
           if (state.currentView !== targetView) switchView(targetView);
           requestAnimationFrame(() => {
-            const node = ALL_NODES.find(n => n.id === nodeId);
+            const node = getAllNodes().find(n => n.id === nodeId);
             if (node) {
               selectNode(node);
               if (!isMobile()) document.querySelector(`.node[data-id="${nodeId}"]`)?.scrollIntoView({behavior:'smooth',block:'center'});

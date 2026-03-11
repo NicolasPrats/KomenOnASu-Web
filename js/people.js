@@ -1,6 +1,4 @@
-import { SCIENTISTS } from '../data/scientists.js';
-import { DOMAINS, TOPICS } from '../data/topics.js';
-import { ALL_NODES, state, yearToLabel, getActiveScientists, initials, domainsForSci } from './store.js';
+import { domainsForSci, getActiveScientists, getAllNodes, getDomains, getScientists, getTopics, initials, state, yearToLabel } from './store.js';
 import { selectScientist } from './detail.js';
 
 const peopleListState = { sort: 'date' };

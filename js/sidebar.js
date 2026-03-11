@@ -1,11 +1,10 @@
-import { DOMAINS, TOPICS } from '../data/topics.js';
-import { state, clearDetail } from './store.js';
+import { clearDetail, getDomains, getTopics, state } from './store.js';
 import { refreshCurrentView } from './views.js';
 
 export function buildSidebar() {
   const sidebar = document.getElementById('sidebar');
   sidebar.innerHTML = '';
-  Object.entries(DOMAINS).forEach(([domainId, domain]) => {
+  Object.entries(getDomains()).forEach(([domainId, domain]) => {
     const group = document.createElement('div');
     group.className = 'domain-group' + (state.openDomains.has(domainId) ? ' open' : '');
     group.dataset.domainId = domainId;
@@ -28,7 +27,7 @@ export function buildSidebar() {
     const domainCheck = document.createElement('span');
     domainCheck.className = 'domain-check';
     const updateDomainCheck = () => {
-      const topics = domain.topics.filter(t => TOPICS[t]);
+      const topics = domain.topics.filter(t => getTopics()[t]);
       const allOn  = topics.every(t => state.activeTopics.has(t));
       const someOn = topics.some(t => state.activeTopics.has(t));
       domainCheck.dataset.state = allOn ? 'all' : someOn ? 'some' : 'none';
@@ -42,7 +41,7 @@ export function buildSidebar() {
 
     // Clic sur check ou label = toggle tous les topics du domaine
     const toggleDomain = () => {
-      const topics = domain.topics.filter(t => TOPICS[t]);
+      const topics = domain.topics.filter(t => getTopics()[t]);
       const allOn = topics.every(t => state.activeTopics.has(t));
       if (allOn) {
         // Tout décocher — mais garder au moins 1 topic actif globalement
@@ -68,7 +67,7 @@ export function buildSidebar() {
     const topicsDiv = document.createElement('div');
     topicsDiv.className = 'domain-topics';
     domain.topics.forEach(topicId => {
-      const topic = TOPICS[topicId]; if (!topic) return;
+      const topic = getTopics()[topicId]; if (!topic) return;
       const btn = document.createElement('button');
       btn.className = 'topic-btn' + (state.activeTopics.has(topicId) ? ' active' : '');
       btn.dataset.topicId = topicId;
@@ -93,7 +92,7 @@ export function refreshSidebarChecks() {
   document.querySelectorAll('.domain-group').forEach(group => {
     const domainId = group.dataset.domainId;
     if (!domainId) return;
-    const topics = DOMAINS[domainId].topics.filter(t => TOPICS[t]);
+    const topics = getDomains()[domainId].topics.filter(t => getTopics()[t]);
     const allOn  = topics.every(t => state.activeTopics.has(t));
     const someOn = topics.some(t => state.activeTopics.has(t));
     const dc = group.querySelector('.domain-check');

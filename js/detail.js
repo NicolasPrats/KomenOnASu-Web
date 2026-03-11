@@ -1,7 +1,4 @@
-import { ELEMENTS, ELEMENT_ICONS } from '../data/elements.js';
-import { SCIENTISTS } from '../data/scientists.js';
-import { TOPICS } from '../data/topics.js';
-import { ALL_NODES, ENABLED_BY, state, yearToLabel, getScientistsForNode, getTopicsForNode, initials, domainsForSci, clearDetail } from './store.js';
+import { clearDetail, domainsForSci, getAllNodes, getElementIcons, getElements, getEnabledBy, getScientists, getScientistsForNode, getTopics, getTopicsForNode, initials, state, yearToLabel } from './store.js';
 import { switchView } from './views.js';
 import { isMobile } from './mobile.js';
 
@@ -39,7 +36,7 @@ function relHtml(list, arrow, label) {
   return `<div><div class="detail-section-label">${label}</div><div class="relations-list">
     ${list.map(r => `
       <div class="relation-item" data-relate-id="${r.id}" data-relate-topic="${r.topicId ?? ''}">
-        <div class="legend-dot" style="background:${ELEMENTS[r.element]?.color??'#888'}"></div>
+        <div class="legend-dot" style="background:${getElements()[r.element]?.color??'#888'}"></div>
         <span class="relation-arrow">${arrow}</span>
         <span class="relation-name">${r.name}</span>
         <span class="relation-year">${yearToLabel(r.year)}</span>
@@ -54,10 +51,10 @@ function showDetailNode(node) {
   const content = document.getElementById('detailContent');
   content.style.display = 'block';
 
-  const elInfo = ELEMENTS[node.element] ?? {};
-  const icon = ELEMENT_ICONS[node.element] ?? '';
-  const bases   = (node.relatesTo ?? []).map(id => ALL_NODES.find(n => n.id === id)).filter(Boolean);
-  const enables = ENABLED_BY[node.id] ?? [];
+  const elInfo = getElements()[node.element] ?? {};
+  const icon = getElementIcons()[node.element] ?? '';
+  const bases   = (node.relatesTo ?? []).map(id => getAllNodes().find(n => n.id === id)).filter(Boolean);
+  const enables = getEnabledBy()[node.id] ?? [];
   const topicsForNode = node.topicId ? [node.topicId] : getTopicsForNode(node.id);
   const sciForNode = getScientistsForNode(node.id);
 
@@ -100,7 +97,7 @@ function showDetailNode(node) {
         ${node.author ? `<div class="detail-author">${node.author}</div>` : ''}
         ${node.humanReviewed === false ? `<span class="unreviewed-badge" style="margin-top:0.3rem">⚠ contenu non relu par un humain</span>` : ''}
       </div>
-      ${topicsForNode.length ? `<div class="detail-topic-tags">${topicsForNode.map(tid=>`<span class="detail-topic-tag">${TOPICS[tid]?.label??tid}</span>`).join('')}</div>` : ''}
+      ${topicsForNode.length ? `<div class="detail-topic-tags">${topicsForNode.map(tid=>`<span class="detail-topic-tag">${getTopics()[tid]?.label??tid}</span>`).join('')}</div>` : ''}
       <div class="divider"></div>
       <div><div class="detail-section-label">Description</div><div class="detail-desc markdown-body">${typeof marked !== 'undefined' ? marked.parse(node.description ?? node.excerpt ?? '') : (node.description ?? node.excerpt ?? '')}</div></div>
       ${refsHtml}
@@ -116,7 +113,7 @@ function showDetailNode(node) {
       const topicId = item.dataset.relateTopic, nodeId = item.dataset.relateId;
       if (!state.activeTopics.has(topicId)) import('./sidebar.js').then(m => m.toggleTopic(topicId));
       requestAnimationFrame(() => {
-        const target = ALL_NODES.find(n => n.id===nodeId);
+        const target = getAllNodes().find(n => n.id===nodeId);
         if (target) { selectNode(target); document.querySelector(`.node[data-id="${nodeId}"]`)?.scrollIntoView({behavior:'smooth',block:'center'}); }
       });
     });
@@ -129,7 +126,7 @@ function showDetailNode(node) {
 
 // ─── Détail scientifique ──────────────────────────────────────
 function showDetailScientist(sciId) {
-  const sci = SCIENTISTS[sciId]; if (!sci) return;
+  const sci = getScientists()[sciId]; if (!sci) return;
   document.getElementById('detailPanel').classList.remove('empty');
   document.getElementById('detailEmpty').classList.add('hidden');
   const content = document.getElementById('detailContent');
@@ -144,9 +141,9 @@ function showDetailScientist(sciId) {
     : '';
 
   const contribHtml = sci.contributions.map(c => {
-    const node = ALL_NODES.find(n => n.id === c.nodeId);
+    const node = getAllNodes().find(n => n.id === c.nodeId);
     if (!node) return '';
-    const color = ELEMENTS[node.element]?.color ?? '#888';
+    const color = getElements()[node.element]?.color ?? '#888';
     return `<div class="contrib-item" data-node-id="${node.id}" data-topic-id="${node.topicId ?? ''}">
       <div class="contrib-dot" style="background:${color}"></div>
       <div class="contrib-info">
@@ -190,7 +187,7 @@ function showDetailScientist(sciId) {
       const targetView = isMobile() ? 'nodes' : 'timeline';
       if (state.currentView !== targetView) switchView(targetView);
       requestAnimationFrame(() => {
-        const target = ALL_NODES.find(n => n.id === nodeId);
+        const target = getAllNodes().find(n => n.id === nodeId);
         if (target) {
           selectNode(target);
           if (!isMobile()) document.querySelector(`.node[data-id="${nodeId}"]`)?.scrollIntoView({behavior:'smooth',block:'center'});

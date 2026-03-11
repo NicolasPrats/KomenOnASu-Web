@@ -1,5 +1,4 @@
-import { ELEMENTS, ELEMENT_ICONS } from '../data/elements.js';
-import { state, getActiveNodes, yearToLabel } from './store.js';
+import { getActiveNodes, getElementIcons, getElements, state, yearToLabel } from './store.js';
 import { selectNode } from './detail.js';
 
 let dagLayoutCache = null;
@@ -140,7 +139,7 @@ export function drawGraph() {
   edges.forEach(({ from, to }) => {
     const a = positions[from], b = positions[to];
     if (!a || !b) return;
-    const color = ELEMENTS[a.node.element]?.color ?? '#555';
+    const color = getElements()[a.node.element]?.color ?? '#555';
     drawEgoDagEdge(ctx, a, b, from === selectedId, to === selectedId, cx, color);
   });
   ctx.setLineDash([]);
@@ -161,7 +160,7 @@ export function drawGraph() {
 
 function drawEgoDagNode(ctx, p, isSelected, isHovered, cx, cy) {
   const { x, y, node } = p;
-  const color = ELEMENTS[node.element]?.color ?? '#888';
+  const color = getElements()[node.element]?.color ?? '#888';
 
   if (isSelected) {
     // ── Grand rectangle central ──────────────────────────────
@@ -186,13 +185,13 @@ function drawEgoDagNode(ctx, p, isSelected, isHovered, cx, cy) {
     ctx.fillStyle = color; ctx.fill();
 
     // Icône
-    drawSvgIcon(ctx, ELEMENT_ICONS[node.element] ?? '', color, rx + 20, y, 20);
+    drawSvgIcon(ctx, getElementIcons()[node.element] ?? '', color, rx + 20, y, 20);
 
     // Type
     ctx.fillStyle = color + 'cc';
     ctx.font = "bold 8px 'JetBrains Mono',monospace";
     ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-    ctx.fillText((ELEMENTS[node.element]?.label ?? '').toUpperCase(), rx + 36, ry + 10);
+    ctx.fillText((getElements()[node.element]?.label ?? '').toUpperCase(), rx + 36, ry + 10);
 
     // Titre
     ctx.fillStyle = '#edeae2';
@@ -216,7 +215,7 @@ function drawEgoDagNode(ctx, p, isSelected, isHovered, cx, cy) {
     ctx.fill(); ctx.stroke();
 
     // Icône dans le cercle
-    drawSvgIcon(ctx, ELEMENT_ICONS[node.element] ?? '', color, x, y, r * 0.9);
+    drawSvgIcon(ctx, getElementIcons()[node.element] ?? '', color, x, y, r * 0.9);
 
     // Direction radiale vers l'extérieur depuis le centre du canvas
     const dx = x - cx, dy = y - cy;
@@ -331,7 +330,7 @@ function renderGraphEmptyState() {
     </div>
     <div style="display:flex;flex-direction:column;gap:0.3rem;max-height:70vh;overflow-y:auto;width:320px;">
       ${unique.map(n => {
-        const color = ELEMENTS[n.element]?.color ?? '#888';
+        const color = getElements()[n.element]?.color ?? '#888';
         return `<div class="graph-pick-item" data-node-id="${n.id}" style="
           display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0.75rem;border-radius:3px;
           background:var(--bg2);border:1px solid var(--border);cursor:pointer;transition:border-color 0.12s;">
@@ -378,7 +377,7 @@ export function initGraph() {
     if (hit) {
       tooltip.style.left = (e.offsetX + 16) + 'px';
       tooltip.style.top  = (e.offsetY + 12) + 'px';
-      tooltip.innerHTML  = `<div class="tt-name">${hit.name}</div><div class="tt-year">${yearToLabel(hit.year)}</div><div class="tt-type">${ELEMENTS[hit.element]?.label ?? ''}</div>`;
+      tooltip.innerHTML  = `<div class="tt-name">${hit.name}</div><div class="tt-year">${yearToLabel(hit.year)}</div><div class="tt-type">${getElements()[hit.element]?.label ?? ''}</div>`;
       tooltip.classList.add('visible');
     } else {
       tooltip.classList.remove('visible');

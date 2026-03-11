@@ -1,11 +1,10 @@
-import { ELEMENTS } from '../data/elements.js';
-import { state } from './store.js';
+import { getElements, state } from './store.js';
 import { refreshCurrentView } from './views.js';
 
 export function buildLegend() {
   const container = document.getElementById('legend');
   container.innerHTML = '';
-  Object.entries(ELEMENTS).forEach(([id, el]) => {
+  Object.entries(getElements()).forEach(([id, el]) => {
     const item = document.createElement('div');
     item.className = 'legend-item';
     item.innerHTML = `<div class="legend-dot" style="background:${el.color}"></div>${el.label}`;

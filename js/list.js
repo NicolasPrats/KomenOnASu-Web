@@ -1,5 +1,4 @@
-import { ELEMENTS, ELEMENT_ICONS } from '../data/elements.js';
-import { state, getActiveNodes, yearToLabel } from './store.js';
+import { getActiveNodes, getElementIcons, getElements, state, yearToLabel } from './store.js';
 import { selectNode } from './detail.js';
 
 const nodesListState = { sort: 'year' };
@@ -36,8 +35,8 @@ export function renderNodesList() {
   }
 
   unique.forEach((node, i) => {
-    const elInfo = ELEMENTS[node.element] ?? { color:'#888', label:node.element };
-    const icon   = ELEMENT_ICONS[node.element] ?? '';
+    const elInfo = getElements()[node.element] ?? { color:'#888', label:node.element };
+    const icon   = getElementIcons()[node.element] ?? '';
     const card   = document.createElement('div');
     const isSelected = state.selectedNode?.id === node.id;
     card.className = 'node-list-card' + (isSelected ? ' selected' : '');
